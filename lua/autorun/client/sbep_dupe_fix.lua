@@ -7,7 +7,7 @@ SBEP = SBEP or {}
 function SBEP_LoadReplaceTable()
 	print("Loading Filename Changes")
 	local repTab = {}
-	local tableString = file.Read("Smallbridge Filename Changes.txt", "GAME")
+	local tableString = file.Read("addons/sbep/data/sbep/smallbridge_filename_changes.txt", "GAME")
 	local tableRows = string.Explode("\n",tableString)
 	for _,row in pairs(tableRows) do
 		--returns the pair of strings matched by this pattern

@@ -6,6 +6,7 @@ local DCDT = list.Get( "SBEP_DockingClampModels" )
 local DD = list.Get( "SBEP_DoorControllerModels" )
 
 function ENT:Initialize()
+	self:SetName("sbep_docking_clamp")
 	self.Entity:PhysicsInit( SOLID_VPHYSICS )
 	self.Entity:SetMoveType( MOVETYPE_VPHYSICS )
 	self.Entity:SetSolid( SOLID_VPHYSICS )
@@ -58,7 +59,8 @@ function ENT:AddDockDoor()
 
 	local Data = DD[ string.lower( self.Entity:GetModel() ) ]
 	if !Data then return end
-	
+
+	local ply = self:GetPlayer()
 	self.Doors = self.Doors or {}
 	for n,Door in ipairs( Data ) do
 		local D = ents.Create( "sbep_base_door" )
@@ -66,6 +68,8 @@ function ENT:AddDockDoor()
 			D:Initialize()
 			local ct = D:SetDoorType( Door.type )
 		D:Attach( self.Entity , Door.V , Door.A )
+		D:SetPlayer(self:GetPlayer())
+		cleanup.Add( ply, "sbep_door", D)
 		table.insert( self.Doors , D )
 	end
 end

@@ -24,39 +24,53 @@ CategoryTable[1] = {
 TOOL.ClientConVar[ "model" 		] = "models/smallbridge/panels/sbpaneldockin.mdl"
 TOOL.ClientConVar[ "allowuse"   ] = 1
 
+cleanup.Register( "sbep_docking_clamps" )
+
 function TOOL:LeftClick( tr )
 
 	if CLIENT then return end
 	local ply = self:GetOwner()
-	local model = ply:GetInfo( "sbep_docking_clamp_model" )
-	local Data = DockingClampModels[ string.lower( model ) ]
+	local model = ply:GetInfo( "sbep_docking_clamp_model" )	
 	
 	local pos = tr.HitPos
 	
-	local DockEnt = ents.Create( "sbep_base_docking_clamp" )	
-		DockEnt.SPL = self:GetOwner()
-		DockEnt:SetModel( model )
-		DockEnt:SetDockType( Data.ALType )
-	DockEnt:Spawn()
-	DockEnt:Initialize()
-	DockEnt:Activate()
-		
-	for n,P in pairs( Data.EfPoints ) do
-		DockEnt:SetNetworkedVector("EfVec"..n, P.vec)
-		DockEnt:SetNetworkedInt("EfSp"..n, P.sp)
-	end
-	
-	DockEnt:SetPos( pos - Vector(0,0,DockEnt:OBBMins().z) )
-	DockEnt.Usable = ply:GetInfoNum( "sbep_docking_clamp_allowuse", 1 ) == 1
-	
-	DockEnt:AddDockDoor()
+	local DockEnt = MakeSBEPDockingClamp(ply, model, pos, ply:GetInfoNum( "sbep_docking_clamp_allowuse", 1 ) == 1)
+	DockEnt:SetPos(pos - Vector(0,0,DockEnt:OBBMins().z))
 	
 	undo.Create("SBEP Docking Clamp")
 		undo.AddEntity( DockEnt )
 		undo.SetPlayer( ply )
 	undo.Finish()
-
+	ply:AddCleanup( "sbep_docking_clamps", DockEnt )
 	return true
+end
+
+if SERVER then
+	function MakeSBEPDockingClamp(ply, model, pos, usable)
+		local DockEnt = ents.Create( "sbep_base_docking_clamp" )	
+		local Data = DockingClampModels[ string.lower( model ) ]
+		
+		DockEnt.SPL = ply
+		DockEnt:SetModel( model )
+		DockEnt:SetDockType( Data.ALType )
+		DockEnt:Spawn()
+		DockEnt:Initialize()
+		DockEnt:Activate()
+			
+		for n,P in pairs( Data.EfPoints ) do
+			DockEnt:SetNetworkedVector("EfVec"..n, P.vec)
+			DockEnt:SetNetworkedInt("EfSp"..n, P.sp)
+		end
+		
+		DockEnt:SetPos( pos )
+		DockEnt.Usable = usable
+		DockEnt:SetPlayer( ply )
+		
+		DockEnt:AddDockDoor()
+		return DockEnt
+	end
+	duplicator.RegisterEntityClass("sbep_docking_clamp", MakeSBEPDockingClamp, "model", "pos", "usable")
+	duplicator.RegisterEntityClass("sbep_base_docking_clamp", MakeSBEPDockingClamp, "model", "pos", "usable")
 end
 
 function TOOL:RightClick( tr )
@@ -67,6 +81,7 @@ function TOOL:RightClick( tr )
 	local class = dock:GetClass()
 	
 	if class == "sbep_base_docking_clamp" then
+		local ply = self:GetOwner()
 		local type = dock.ALType
 		for model,data in pairs( DockingClampModels ) do
 			local check = false
@@ -79,34 +94,18 @@ function TOOL:RightClick( tr )
 			if check then
 				local pos = dock:GetPos()
 				local ang = dock:GetAngles()
-				
-				local DockEnt = ents.Create( "sbep_base_docking_clamp" )	
-					DockEnt.SPL = self:GetOwner()
-					DockEnt:SetModel( model )
-					DockEnt:SetDockType( data.ALType )
-					DockEnt.Usable = dock.Usable
-				DockEnt:Spawn()
-				DockEnt:Initialize()
-				DockEnt:Activate()
-					
-				for n,P in pairs( data.EfPoints ) do
-					DockEnt:SetNetworkedVector("EfVec"..n, P.vec)
-					DockEnt:SetNetworkedInt("EfSp"..n, P.sp)
-				end
-				
+				local DockEnt = MakeSBEPDockingClamp(ply, model, pos, dock.Usable)								
 				DockEnt:SetPos( Vector(0,-50,100) + pos - Vector(0,0,DockEnt:OBBMins().z) )
 				DockEnt:SetAngles( ang + Angle( 0, data.Compatible[ check ].AYaw , 0 ) )
-				
-				DockEnt:AddDockDoor()
-				
+								
 				dock.DMode = 2
 				DockEnt.DMode = 2
 				
 				undo.Create("SBEP Docking Clamp")
 					undo.AddEntity( DockEnt )
-					undo.SetPlayer( self:GetOwner() )
+					undo.SetPlayer( ply )
 				undo.Finish()
-				
+				ply:AddCleanup( "sbep_docking_clamps", DockEnt )
 				return true
 			end
 		end

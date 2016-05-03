@@ -27,13 +27,15 @@ CategoryTable[1] = {
 					}
 
 CategoryTable[2] = {
-	{ name = "ModBridge Doors"	, cat = "Modbridge" , model = "models/Cerus/Modbridge/Misc/Doors/door11a.mdl" 	 }
+	{ name = "ModBridge Doors"	, cat = "Modbridge" , model = "models/cerus/modbridge/misc/doors/door11a.mdl" 	 }
 					}
 
 TOOL.ClientConVar[ "skin"  		] = 0
-TOOL.ClientConVar[ "model"  	] = "models/SmallBridge/Panels/sbpaneldoor.mdl"
+TOOL.ClientConVar[ "model"  	] = "models/smallbridge/panels/sbpaneldoor.mdl"
 TOOL.ClientConVar[ "wire"  		] = 1
 TOOL.ClientConVar[ "enableuse"	] = 1
+
+cleanup.Register( "sbep_door" )
 
 function TOOL:LeftClick( tr )
 
@@ -61,6 +63,8 @@ function TOOL:LeftClick( tr )
 
 	DoorController:Spawn()
 	DoorController:Activate()
+
+	DoorController:SetPlayer(ply)
 	
 	DoorController:SetPos( pos - Vector(0,0, DoorController:OBBMins().z ) )
 	DoorController:AddDoors()
@@ -71,6 +75,8 @@ function TOOL:LeftClick( tr )
 		undo.AddEntity( DoorController )
 		undo.SetPlayer( ply )
 	undo.Finish()
+
+	cleanup.Add( ply, "sbep_door", DoorController)
 	
 	return true
 end

@@ -160,7 +160,7 @@ SMT.SmallBridge["Height Transfer"] = {
 
 SMT.SmallBridge["Panels"] = {
     "models/SmallBridge/Panels/sbdoor.mdl",
-    "models/SmallBridge/Panels/sbdoorsquare.mdl",
+    "models/smallbridge/panels/sbdoorsquare.mdl",
     "models/SmallBridge/Panels/sbdoorwide.mdl",
     "models/SmallBridge/Panels/sbpaneldbsmall.mdl",
     "models/SmallBridge/Panels/sbpaneldh.mdl",
@@ -173,9 +173,9 @@ SMT.SmallBridge["Panels"] = {
     "models/SmallBridge/Panels/sbpaneldoordw.mdl",
     "models/SmallBridge/Panels/sbpaneldoordw2.mdl",
     "models/SmallBridge/Panels/sbpaneldooriris.mdl",
-    "models/SmallBridge/Panels/sbpaneldoorsquare.mdl",
-    "models/SmallBridge/Panels/sbpaneldoorsquaredw.mdl",
-    "models/SmallBridge/Panels/sbpaneldoorsquaredw2.mdl",
+    "models/smallbridge/panels/sbpaneldoorsquare.mdl",
+    "models/smallbridge/panels/sbpaneldoorsquaredw.mdl",
+    "models/smallbridge/panels/sbpaneldoorsquaredw2.mdl",
     "models/SmallBridge/Panels/sbpaneldoorwide.mdl",
     "models/SmallBridge/Panels/sbpaneldoorwide2.mdl",
     "models/SmallBridge/Panels/sbpaneliris.mdl",

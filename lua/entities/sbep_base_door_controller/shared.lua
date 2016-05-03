@@ -4,7 +4,7 @@ ENT.PrintName		      = "Door Controller Bse"
 ENT.Author			      = "Hysteria"
 ENT.Category			  = "SBEP"
 
-ENT.Spawnable			  = false
+ENT.Spawnable			  = true
 ENT.AdminSpawnable		  = false
 
 ENT.Purpose 		      = "To open and close."
